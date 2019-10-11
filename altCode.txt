@@ -1,0 +1,131 @@
+ /*    	String delim2 = "[\\[\\] \t*+-/()]+";
+    	String[] setOfVariablesOrArrays = expr.split(delim2);
+    	char nxtChar = ' ';
+    	String varName = null;
+    	String expr2 = expr;
+    	for(int i=0;i<setOfVariablesOrArrays.length;i++)
+    	{
+    		varName = setOfVariablesOrArrays[i];
+    		int indx = expr2.indexOf(varName) + varName.length();
+    		
+    		
+    		if(indx<expr2.length()) 
+    		{
+    			nxtChar = expr2.charAt(indx);
+    		}
+    		else
+    		{
+    			indx = expr2.length() -1;
+    		}
+    		
+    		if(nxtChar == '[')
+    		{
+    			arrays.add(new Array(varName));
+    			System.out.println(varName + "  to array");
+    			expr2 = expr2.substring(indx+1);
+    			continue;
+    		}
+    		
+    		
+    		
+    		if((varName.equals("")==false)&&varName.charAt(0)!='0'&& varName.charAt(0)!='1'&& 
+    		   varName.charAt(0)!='2'&&varName.charAt(0)!='3'&& varName.charAt(0)!='4'&& 
+    		   varName.charAt(0)!='5'&&varName.charAt(0)!='6'&& varName.charAt(0)!='7'&& 
+    		   varName.charAt(0)!='8'&&	varName.charAt(0)!='9')
+    		{
+     			vars.add(new Variable(varName));
+     			System.out.println(varName + "  to var");
+    		}
+    		
+    		expr2 = expr2.substring(indx+1);
+    		
+    		
+    	}*/
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    alt code for seval	
+    	
+    	
+    	
+    	//case where following operator is + or -
+    	if(nxtChar == '+' || nxtChar == '-' || nxtChar == 'x')
+    	{
+    		//does operations if they are pending,checks multiplication/div first
+    		if(!multiDiv.isEmpty())
+    		{
+    			
+    			operator = multiDivSign.pop();
+    			if(operator == '*')
+    				newTerm = currentTerm * multiDiv.pop();
+    			else
+    				newTerm = multiDiv.pop() / currentTerm;
+    		}
+    		else if(!addSub.isEmpty() && multiDiv.isEmpty())
+    		{
+    			
+    			operator = addSubSign.pop();
+    			if(operator == '+')
+    				newTerm = currentTerm + addSub.pop();
+    			else
+    				newTerm = addSub.pop() - currentTerm;
+    		}
+    		else
+    			newTerm = currentTerm;  //if no pending operations then currentTerm assigned to new
+    		
+    		
+    		//puts new term and operation following it to the stacks
+    		addSub.push(newTerm);
+    		addSubSign.push(nxtChar);
+    		if(nxtChar != 'x') //means if not last term, if it is last term we go to return
+    		{
+        		seval(setOfVars[1],vars,arrays,addSub,multiDiv,addSubSign,multiDivSign);
+    		}
+    		else
+    		{
+    			while(!addSub.isEmpty())
+    			{
+    				operator = addSubSign.pop();
+        			if(operator == '+')
+        				newTerm = currentTerm + addSub.pop();
+        			else 
+        				newTerm = addSub.pop() - currentTerm;
+    			}
+    			
+    			System.out.println(newTerm+" within x");
+    			addSub.push(newTerm);
+    		}
+       	}
+    	
+    	if(nxtChar == '*' || nxtChar == '/')
+    	{
+    		//does operations if they are pending,checks multiplication/div first
+    		if(!multiDiv.isEmpty())
+    		{
+    			
+    			operator = multiDivSign.pop();
+    			if(operator == '*')
+    				newTerm = currentTerm * multiDiv.pop();
+    			else
+    				newTerm = multiDiv.pop() / currentTerm;
+    		}
+    		else
+    			newTerm = currentTerm;
+    		
+    		
+    		multiDiv.push(newTerm);
+    		multiDivSign.push(nxtChar);
+    		seval(setOfVars[1],vars,arrays,addSub,multiDiv,addSubSign,multiDivSign);
+    	}
+    	
+    	
+    	System.out.println(newTerm + " " + nxtChar);
+    	
+    	
+    	2+3*5-6/2
+    	(2+3)*5-(6/2)
+    	(6/(4+5))
